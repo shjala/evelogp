@@ -18,6 +18,9 @@ import (
 var logs []evelog.LogEntry
 
 func in(target string, source []string) bool {
+	if len(source) == 0 {
+		return true
+	}
 	for _, s := range source {
 		if s == target {
 			return true
@@ -36,19 +39,19 @@ func main() {
 	if *srcDir == "" {
 		log.Fatal("source directory is required")
 	}
-	if *sev == "" {
-		log.Fatal("severity is required")
+	severity := make([]string, 0)
+	if *sev != "" {
+		severity = strings.Split(*sev, ",")
+		if len(severity) == 0 {
+			log.Fatal("severity format is incorrect")
+		}
 	}
-	if *src == "" {
-		log.Fatal("source is required")
-	}
-	severity := strings.Split(*sev, ",")
-	if len(severity) == 0 {
-		log.Fatal("severity format is incorrect")
-	}
-	source := strings.Split(*src, ",")
-	if len(source) == 0 {
-		log.Fatal("source format is incorrect")
+	source := make([]string, 0)
+	if *src != "" {
+		source = strings.Split(*src, ",")
+		if len(source) == 0 {
+			log.Fatal("source format is incorrect")
+		}
 	}
 
 	files, err := os.ReadDir(*srcDir)
