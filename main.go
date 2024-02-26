@@ -123,7 +123,21 @@ func main() {
 	}
 
 	for _, log := range logs {
-		fmt.Printf("%s %s %s\n", log.Timestamp.AsTime().Format("2006-01-02 15:04:05"), log.Severity, log.Content)
+		parsed := make(map[string]interface{})
+		content := log.Content
+		source := log.Source
+		if err := json.Unmarshal([]byte(log.Content), &parsed); err == nil {
+			if _, ok := parsed["msg"]; ok {
+				content = fmt.Sprintf("%v", parsed["msg"])
+			}
+		}
+
+		fmt.Printf("[%s] [%s] [%s] %s\n",
+			log.Timestamp.AsTime().Format("2006-01-02 15:04:05"),
+			log.Severity,
+			source,
+			content)
+
 	}
 
 }
